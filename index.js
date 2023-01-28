@@ -30,10 +30,11 @@ console.log('örnek görev:', ilkiniDon(['as','sa'],function(metin){return metin
   Aşağıdaki skor1 ve skor2 kodlarını inceleyiniz ve aşağıdaki soruları altına not alarak cevaplayın
   
   1. skor1 ve skor2 arasındaki fark nedir?
-  
+  # 'skor' değişkeni skor1 kodlarında fonksiyonun içinde tanımlanmış olup local scope'a sahiptir. Öte yandan, skor2 kodlarında skor değişkeni global scope'ta fonksiyonun dışında tanımlanmıştır.
   2. Hangisi bir closure kullanmaktadır? Nasıl tarif edebilirsin? (yarınki derste öğreneceksin :) )
-  
+  #skor1'e ait kodlarda closure kullanılmıştır. Çünkü iç içe fonksiyon tanımlanmıştır ve skorGuncelle() fonkssiyonun içinden dışa doğru gidilip skor değişkeni çekilmiştir.
   3. Hangi durumda skor1 tercih edilebilir? Hangi durumda skor2 daha mantıklıdır?
+  #Eğer bir değişkeni farklı yerlerde çağırabileceğimizi düşünüyorsak, global scope'ta, skor2 kodlarında olduğu gibi kullanmak daha mantıklı gözüküyor. Ama sadece fonksiyon özelinde bir değişkene ihtiyacımız varsa çalışma hızını da düşünerek sadece fonksiyonun içinde kullanmak daha elverişli görünüyor. 
 */
 
 // skor1 kodları
@@ -64,10 +65,14 @@ Aşağıdaki takimSkoru() fonksiyonununda aşağıdakileri yapınız:
 Not: Bu fonskiyon, aşağıdaki diğer görevler için de bir callback fonksiyonu olarak da kullanılacak
 */
 
-function takimSkoru(/*Kodunuzu buraya yazınız*/){
-    /*Kodunuzu buraya yazınız*/
+function takimSkoru(){
+  let skor = Math.floor(Math.random() * (25 - 10) + 10);
+  return skor;
+// Math.floor(Math.random()*16) +10
+//math.floor(math.random()*16 +10)
 }
 
+console.log(takimSkoru());
 
 
 
@@ -78,7 +83,6 @@ Aşağıdaki macSonucu() fonksiyonununda aşağıdakileri yapınız:
   3. Her çeyrekte EvSahibi ve KonukTakim için bir skor oluşturun
   4. Her oynanan çeyrekten sonra EvSahibi ve KonukTakim için skoru güncelleyin
   5. Son çeyrekten sonra, maçın bitiş skorunu bir object olarak dönün(return)
-
   Örneğin: macSonucu(takimSkoru, 4) çalıştırınca aşağıdaki object'i dönmeli
 {
   "EvSahibi": 92,
@@ -86,10 +90,32 @@ Aşağıdaki macSonucu() fonksiyonununda aşağıdakileri yapınız:
 }
 */ 
 
-function macSonucu(/*Kodunuzu buraya yazınız*/){
-  /*Kodunuzu buraya yazınız*/
-}
+function macSonucu(callback, period){
 
+  let evSahibi = 0;
+  let konukTakim = 0;
+
+
+  for(let i=1; i<=period;i++) {
+    evSahibi += callback();
+    konukTakim += callback();
+  }
+
+  let sonuc = {}
+
+  sonuc.EvSahibi = evSahibi;
+  sonuc.KonukTakim = konukTakim;
+
+  return sonuc;
+// let sonuc = {};
+
+// sonuc.EvSahibi = takimSkoru() * period;
+// sonuc.konukTakim = takimSkoru() * period;
+
+}
+console.log(macSonucu(takimSkoru,4));
+
+ 
 
 
 
@@ -109,12 +135,17 @@ Aşağıdaki periyotSkoru() fonksiyonununda aşağıdakileri yapınız:
   */
 
 
-function periyotSkoru(/*Kodunuzu buraya yazınız*/) {
-  /*Kodunuzu buraya yazınız*/
+function periyotSkoru(callback) {
+  let score = {};
+
+  score.EvSahibi = callback();
+  score.KonukTakim = callback();
+
+  return score;
 
 }
 
-
+periyotSkoru(takimSkoru);
 /* Zorlayıcı Görev 5: skorTabelasi() 
 Aşağıdaki skorTabelasi() fonksiyonunu kullanarak aşağıdakileri yapınız:
   1. İlk parametre olarak Görev 4'te oluşturduğumuz 'periyotSkoru'nu bir değişken olarak almalı
@@ -123,7 +154,6 @@ Aşağıdaki skorTabelasi() fonksiyonunu kullanarak aşağıdakileri yapınız:
   4. Her bir çeyreğin sonucunu bir string olarak bir array içinde dönün. Aşadaki örnek gibi olmalı. Her çeyrekteki atılan sayıları ayrı ayrı yazmalı(toplam skoru değil!).
   5. Eğer maç berabere biterse uzatmalar oynanmalı ve "Uzatma 1: Ev Sahibi 13 - Konuk Takım 11" eklemeli. (Her uzatma için ayrı ayrı eklemeli)
   6. Maç bitince de final skoru yazmalı: "Maç Sonucu: Ev Sahibi 101 - Konuk Takım 98"
-
 MAÇ UZAMAZ ise skorTabelasi(periyotSkoru,takimSkoru,4)
   
 [
@@ -133,7 +163,6 @@ MAÇ UZAMAZ ise skorTabelasi(periyotSkoru,takimSkoru,4)
   "4. Periyot: Ev Sahibi 18 - Konuk Takım 11", 
   "Maç Sonucu: Ev Sahibi 61 - Konuk Takım 54"  
 ]
-
 MAÇ UZAR ise skorTabelasi(periyotSkoru,takimSkoru,4)
 [
   "1. Periyot: Ev Sahibi 10 - Konuk Takım 21", 
@@ -146,9 +175,11 @@ MAÇ UZAR ise skorTabelasi(periyotSkoru,takimSkoru,4)
 ] */
 // NOTE: Bununla ilgili bir test yoktur. Eğer logladığınız sonuçlar yukarıdakine benziyor ise tmamlandı sayabilirsiniz.
 
-function skorTabelasi(/*Kodunuzu buraya yazınız*/) {
-  /*Kodunuzu buraya yazınız*/
+function skorTabelasi(periyotSkoru,takimSkoru, period) {
+ 
 }
+
+
 
 
 
